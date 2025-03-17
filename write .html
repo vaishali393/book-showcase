@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write - My Writing Platform</title>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // 🔥 Replace with your Firebase details
+        const firebaseConfig = {
+            apiKey: "AIzaSyC4xrZLOfCslYsejDinudBiYDT6od1wy64",
+            authDomain: "mywritingplatform.firebaseapp.com",
+            projectId: "mywritingplatform",
+            storageBucket: "mywritingplatform.firebasestorage.app",
+            messagingSenderId: "275903705749",
+            appId: "1:275903705749:web:2d64a8a5bb10be6ac6a19c"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Function to save chapter
+        async function saveChapter() {
+            const title = document.getElementById("chapterTitle").value;
+            const content = document.getElementById("chapterContent").value;
+            
+            if (!title || !content) {
+                alert("Please enter both title and content.");
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, "chapters"), { title, content });
+                alert("Chapter saved successfully!");
+                loadChapters(); // Reload the list
+            } catch (error) {
+                console.error("Error saving chapter: ", error);
+                alert("Failed to save chapter.");
+            }
+        }
+
+        // Function to load chapters
+        async function loadChapters() {
+            const chapterList = document.getElementById("chapterList");
+            chapterList.innerHTML = '<option value="">Select a Chapter</option>';
+            const displayChapter = document.getElementById("displayChapter");
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "chapters"));
+                querySnapshot.forEach((doc) => {
+                    let option = document.createElement("option");
+                    option.value = doc.id;
+                    option.textContent = doc.data().title;
+                    chapterList.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error loading chapters: ", error);
+                alert("Failed to load chapters.");
+            }
+        }
+
+        // Function to display selected chapter
+        async function displaySelectedChapter() {
+            const selectedChapter = document.getElementById("chapterList").value;
+            const displayChapter = document.getElementById("displayChapter");
+
+            if (!selectedChapter) {
+                displayChapter.innerText = "No chapter selected.";
+                return;
+            }
+
+            const querySnapshot = await getDocs(collection(db, "chapters"));
+            querySnapshot.forEach((doc) => {
+                if (doc.id === selectedChapter) {
+                    displayChapter.innerText = doc.data().content;
+                }
+            });
+        }
+
+        window.saveChapter = saveChapter;
+        window.displaySelectedChapter = displaySelectedChapter;
+        window.onload = loadChapters;
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        textarea, select, input {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Write Your Book</h1>
+        <input type="text" id="chapterTitle" placeholder="Chapter Title">
+        <textarea id="chapterContent" placeholder="Write your chapter..."></textarea>
+        <button onclick="saveChapter()">Save Chapter</button>
+
+        <h2>Read Your Chapters</h2>
+        <select id="chapterList" onchange="displaySelectedChapter()">
+            <option value="">Select a Chapter</option>
+        </select>
+        <p id="displayChapter">No chapter selected.</p>
+    </div>
+</body>
+</html>
