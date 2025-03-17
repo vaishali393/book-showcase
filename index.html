@@ -4,6 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - My Writing Platform</title>
+
+    <!-- Firebase Configuration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        
+        // 🔥 Replace these values with your Firebase details
+        const firebaseConfig = {
+           apiKey: "AIzaSyC4xrZLOfCslYsejDinudBiYDT6od1wy64",
+           authDomain: "mywritingplatform.firebaseapp.com",
+           projectId: "mywritingplatform",
+           storageBucket: "mywritingplatform.firebasestorage.app",
+           messagingSenderId: "275903705749",
+           appId: "1:275903705749:web:2d64a8a5bb10be6ac6a19c",
+           measurementId: "G-4YFNTP59ZG"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+    </script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
