@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Writing Platform</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin-top: 10px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        select {
+            margin-top: 10px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Writing Platform</h1>
+        <h2>Write Your Book</h2>
+        <input type="text" id="chapterTitle" placeholder="Chapter Title">
+        <textarea id="chapterContent" placeholder="Write your chapter..."></textarea>
+        <button onclick="saveChapter()">Save Chapter</button>
+        
+        <h2>Read Your Chapters</h2>
+        <select id="chapterList" onchange="loadChapter()">
+            <option value="">Select a Chapter</option>
+        </select>
+        <p id="displayChapter">No chapter selected.</p>
+    </div>
+
+    <script>
+        function saveChapter() {
+            const title = document.getElementById("chapterTitle").value;
+            const content = document.getElementById("chapterContent").value;
+            if (!title || !content) {
+                alert("Please enter both title and content.");
+                return;
+            }
+            
+            let chapters = JSON.parse(localStorage.getItem("chapters")) || {};
+            chapters[title] = content;
+            localStorage.setItem("chapters", JSON.stringify(chapters));
+            updateChapterList();
+        }
+        
+        function updateChapterList() {
+            const chapterList = document.getElementById("chapterList");
+            chapterList.innerHTML = '<option value="">Select a Chapter</option>';
+            
+            let chapters = JSON.parse(localStorage.getItem("chapters")) || {};
+            for (let title in chapters) {
+                let option = document.createElement("option");
+                option.value = title;
+                option.textContent = title;
+                chapterList.appendChild(option);
+            }
+        }
+        
+        function loadChapter() {
+            const selectedTitle = document.getElementById("chapterList").value;
+            let chapters = JSON.parse(localStorage.getItem("chapters")) || {};
+            document.getElementById("displayChapter").innerText = chapters[selectedTitle] || "No chapter selected.";
+        }
+        
+        // Load existing chapters on page load
+        updateChapterList();
+    </script>
+</body>
+</html>
